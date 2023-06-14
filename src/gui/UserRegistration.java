@@ -4,14 +4,17 @@
  */
 package gui;
 
+//import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.Vector;
 import javax.swing.ButtonModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -19,12 +22,15 @@ import javax.swing.DefaultComboBoxModel;
  */
 public class UserRegistration extends javax.swing.JFrame {
 
+    public static HashMap<String, Integer> countryMap = new HashMap();
+
     /**
      * Creates new form UserRegistration
      */
     public UserRegistration() {
         initComponents();
         LoadCountry();
+        TableLoad();
 
     }
 
@@ -42,16 +48,56 @@ public class UserRegistration extends javax.swing.JFrame {
             Statement statment = connection.createStatement();
 
             ResultSet resultSet = statment.executeQuery("SELECT * FROM `country`");
-            Vector country = new Vector();
-            country.add("Select");
-            DefaultComboBoxModel model1 = new DefaultComboBoxModel(country);
+            Vector <String> countryDataVector = new Vector();
+            countryDataVector.add("Select");
+
+            DefaultComboBoxModel model1 = new DefaultComboBoxModel(countryDataVector);
             while (resultSet.next()) {
-                String countryName = resultSet.getString("country");
-                country.add(resultSet.getString("country"));
+                countryDataVector.add(resultSet.getString("country"));
+                countryMap.put(resultSet.getString("country"), resultSet.getInt("country_id"));
 //                System.out.println(countryName);
 
             }
             jComboBox1.setModel(model1);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void reset() {
+        jTextField1.setText("");
+        jTextField2.setText("");
+        jTextField3.setText("");
+        jPasswordField1.setText("");
+        jComboBox1.setSelectedIndex(0);
+        buttonGroup1.clearSelection();
+    }
+
+    private void TableLoad() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db5", "root", "200528100634@Vn");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM db5.user INNER JOIN `db5`.`gender` ON `gender_id` = `gender_gender_id` INNER JOIN `db5`.`country` ON `country_country_id` = `country_id`;");
+            DefaultTableModel userTableModel = (DefaultTableModel) jTable1.getModel();
+            userTableModel.setRowCount(0);
+            
+            
+            while (resultSet.next()) {
+                Vector <String> tableVector = new Vector();
+                tableVector.add(resultSet.getString("user_id"));
+                tableVector.add(resultSet.getString("first_namr"));
+                tableVector.add(resultSet.getString("last_name"));
+                tableVector.add(resultSet.getString("username"));
+                tableVector.add(resultSet.getString("password"));
+                tableVector.add(resultSet.getString("gender"));
+                tableVector.add(resultSet.getString("country"));
+               
+                userTableModel.addRow(tableVector);
+                jTable1.setModel(userTableModel);
+                
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,6 +135,7 @@ public class UserRegistration extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         jLabel1.setText("First Name");
@@ -112,11 +159,11 @@ public class UserRegistration extends javax.swing.JFrame {
 
         buttonGroup1.add(jRadioButton1);
         jRadioButton1.setText("Male");
-        jRadioButton1.setActionCommand("Male");
+        jRadioButton1.setActionCommand("1");
 
         buttonGroup1.add(jRadioButton2);
         jRadioButton2.setText("Female");
-        jRadioButton2.setActionCommand("Female");
+        jRadioButton2.setActionCommand("2");
 
         jButton1.setText("Create New User Account");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -136,7 +183,7 @@ public class UserRegistration extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addGap(6, 6, 6)
@@ -257,7 +304,6 @@ public class UserRegistration extends javax.swing.JFrame {
             String country = String.valueOf(jComboBox1.getSelectedItem());
             ButtonModel genderSelection = buttonGroup1.getSelection();
 
-       
             if (firstname.isEmpty()) {
                 System.out.println("Invalid First Name");
             } else if (lastname.isEmpty()) {
@@ -271,7 +317,10 @@ public class UserRegistration extends javax.swing.JFrame {
             } else if (genderSelection == null) {
                 System.out.println("Invalid Gender");
             } else {
-                String gender = buttonGroup1.getSelection().getActionCommand();
+                String genderId = buttonGroup1.getSelection().getActionCommand();
+//                System.out.println(genderId);
+                int country_id = countryMap.get(country);
+
                 try {
                     String Username = "root";
                     String Password = "200528100634@Vn";
@@ -283,8 +332,10 @@ public class UserRegistration extends javax.swing.JFrame {
                             "jdbc:mysql://localhost:3306/" + Database, Username, Password);
 
                     Statement statment = connection.createStatement();
-                    
+                    statment.executeUpdate("INSERT INTO `user` (`first_namr`,`last_name`,`username`,`password`,`gender_gender_id`,`country_country_id`) VALUES ('" + firstname + "','" + lastname + "','" + username + "','" + password + "','" + genderId + "','" + country_id + "')");
 
+                    reset();
+                    TableLoad();
                 } catch (Exception e) {
 
                 }
@@ -293,14 +344,6 @@ public class UserRegistration extends javax.swing.JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-//        System.out.println(firstname);
-//        System.out.println(lastname);
-//        System.out.println(username);
-//        System.out.println(password);
-//        System.out.println(country);
-//        System.out.println(gender);
-
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -308,6 +351,7 @@ public class UserRegistration extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         FlatAtomOneDarkIJTheme.setup();
+//        FlatDarkLaf.setup();
         //</editor-fold>
 
         /* Create and display the form */
