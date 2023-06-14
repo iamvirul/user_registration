@@ -252,7 +252,7 @@
                 <Column editable="false" title="Last Name" type="java.lang.Object"/>
                 <Column editable="false" title="Username" type="java.lang.Object"/>
                 <Column editable="false" title="Password" type="java.lang.Object"/>
-                <Column editable="true" title="Country" type="java.lang.Object"/>
+                <Column editable="false" title="Country" type="java.lang.Object"/>
                 <Column editable="false" title="Gender" type="java.lang.Object"/>
               </Table>
             </Property>
@@ -278,12 +278,12 @@
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                   <Title/>
                   <Editor/>
                   <Renderer/>
