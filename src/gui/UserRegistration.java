@@ -48,7 +48,7 @@ public class UserRegistration extends javax.swing.JFrame {
             Statement statment = connection.createStatement();
 
             ResultSet resultSet = statment.executeQuery("SELECT * FROM `country`");
-            Vector <String> countryDataVector = new Vector();
+            Vector<String> countryDataVector = new Vector();
             countryDataVector.add("Select");
 
             DefaultComboBoxModel model1 = new DefaultComboBoxModel(countryDataVector);
@@ -82,10 +82,9 @@ public class UserRegistration extends javax.swing.JFrame {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM db5.user INNER JOIN `db5`.`gender` ON `gender_id` = `gender_gender_id` INNER JOIN `db5`.`country` ON `country_country_id` = `country_id`;");
             DefaultTableModel userTableModel = (DefaultTableModel) jTable1.getModel();
             userTableModel.setRowCount(0);
-            
-            
+
             while (resultSet.next()) {
-                Vector <String> tableVector = new Vector();
+                Vector<String> tableVector = new Vector();
                 tableVector.add(resultSet.getString("user_id"));
                 tableVector.add(resultSet.getString("first_namr"));
                 tableVector.add(resultSet.getString("last_name"));
@@ -93,10 +92,10 @@ public class UserRegistration extends javax.swing.JFrame {
                 tableVector.add(resultSet.getString("password"));
                 tableVector.add(resultSet.getString("gender"));
                 tableVector.add(resultSet.getString("country"));
-               
+
                 userTableModel.addRow(tableVector);
                 jTable1.setModel(userTableModel);
-                
+
             }
 
         } catch (Exception e) {
@@ -249,7 +248,7 @@ public class UserRegistration extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Id", "First Name", "Last Name", "Username", "Password", "Country", "Gender"
+                "Id", "First Name", "Last Name", "Username", "Password", "Gender", "Country"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -352,8 +351,28 @@ public class UserRegistration extends javax.swing.JFrame {
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
         if (evt.getClickCount() == 2) {
-                    System.out.println("ok");
-
+            
+            int selectedRowData = jTable1.getSelectedRow();
+            String Fname = String.valueOf(jTable1.getValueAt(selectedRowData, 1));
+            String lname = String.valueOf(jTable1.getValueAt(selectedRowData, 2));
+            String userString = String.valueOf(jTable1.getValueAt(selectedRowData, 3));
+            String password = String.valueOf(jTable1.getValueAt(selectedRowData, 4));
+            String genderString = String.valueOf(jTable1.getValueAt(selectedRowData, 5));
+            String countryString = String.valueOf(jTable1.getValueAt(selectedRowData, 6));
+            
+            jTextField1.setText(Fname);
+            jTextField2.setText(lname);
+            jTextField3.setText(userString);
+            jPasswordField1.setText(password);
+            System.out.println(genderString);
+            if (genderString.equals("Male")) {
+                jRadioButton1.setSelected(true);
+            }
+            if (genderString.equals("Female")) {
+                jRadioButton2.setSelected(true);
+            }
+            
+            System.out.println(Fname);
         }
     }//GEN-LAST:event_jTable1MouseClicked
 
