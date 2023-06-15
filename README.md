@@ -15,9 +15,6 @@ This is simple application made from java
 
 
 
-## Demo
-
-Insert gif or link to demo
 
 
 ## 🚀 About Me
