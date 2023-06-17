@@ -6,16 +6,14 @@ package gui;
 
 //import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Vector;
 import javax.swing.ButtonModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import model.mysql;
 
 /**
  *
@@ -37,18 +35,8 @@ public class UserRegistration extends javax.swing.JFrame {
 
     private void LoadCountry() {
         try {
-            String username = "root";
-            String Password = "200528100634@Vn";
-            String Database = "db5";
+            ResultSet resultSet = mysql.execute("SELECT * FROM `country`");
 
-            Class.forName(
-                    "com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/" + Database, username, Password);
-
-            Statement statment = connection.createStatement();
-
-            ResultSet resultSet = statment.executeQuery("SELECT * FROM `country`");
             Vector<String> countryDataVector = new Vector();
             countryDataVector.add("Select");
 
@@ -77,10 +65,7 @@ public class UserRegistration extends javax.swing.JFrame {
 
     private void TableLoad() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db5", "root", "200528100634@Vn");
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM db5.user INNER JOIN `db5`.`gender` ON `gender_id` = `gender_gender_id` INNER JOIN `db5`.`country` ON `country_country_id` = `country_id` ORDER by `user_id` ASC");
+            ResultSet resultSet = mysql.execute("SELECT * FROM db5.user INNER JOIN `db5`.`gender` ON `gender_id` = `gender_gender_id` INNER JOIN `db5`.`country` ON `country_country_id` = `country_id` ORDER by `user_id` ASC");
             DefaultTableModel userTableModel = (DefaultTableModel) jTable1.getModel();
             userTableModel.setRowCount(0);
 
@@ -354,20 +339,12 @@ public class UserRegistration extends javax.swing.JFrame {
                 int country_id = countryMap.get(country);
 
                 try {
-                    String Username = "root";
-                    String Password = "200528100634@Vn";
-                    String Database = "db5";
 
-                    Class.forName(
-                            "com.mysql.cj.jdbc.Driver");
-                    Connection connection = DriverManager.getConnection(
-                            "jdbc:mysql://localhost:3306/" + Database, Username, Password);
-
-                    Statement statment = connection.createStatement();
-                    statment.executeUpdate("INSERT INTO `user` (`first_namr`,`last_name`,`username`,`password`,`gender_gender_id`,`country_country_id`) VALUES ('" + firstname + "','" + lastname + "','" + username + "','" + password + "','" + genderId + "','" + country_id + "')");
-                    JOptionPane.showMessageDialog(this, "Registration Done", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    mysql.execute("INSERT INTO `user` (`first_namr`,`last_name`,`username`,`password`,`gender_gender_id`,`country_country_id`) VALUES ('" + firstname + "','" + lastname + "','" + username + "','" + password + "','" + genderId + "','" + country_id + "')");
                     reset();
                     TableLoad();
+                    JOptionPane.showMessageDialog(this, "Registration Done", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    
                 } catch (Exception e) {
 
                 }
@@ -442,15 +419,12 @@ public class UserRegistration extends javax.swing.JFrame {
                 String genderId = buttonGroup1.getSelection().getActionCommand();
                 int country_id = countryMap.get(country);
                 try {
-                    Class.forName("com.mysql.cj.jdbc.Driver");
-                    Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/db5", "root", "200528100634@Vn");
-                    Statement statement = connection.createStatement();
-                    statement.executeUpdate("UPDATE `user` SET `first_namr` = '" + firstname + "',`last_name` = '" + lastname + "' ,`username` = '" + username + "', `password` = '" + password + "', `gender_gender_id` = '" + genderId + "' , `country_country_id` = '" + country_id + "' WHERE `user_id` = '" + id + "'");
+
+                    mysql.execute("UPDATE `user` SET `first_namr` = '" + firstname + "',`last_name` = '" + lastname + "' ,`username` = '" + username + "', `password` = '" + password + "', `gender_gender_id` = '" + genderId + "' , `country_country_id` = '" + country_id + "' WHERE `user_id` = '" + id + "'");
 //                System.out.println("done");
-                    JOptionPane.showMessageDialog(this, "Update is Done", "Success", JOptionPane.INFORMATION_MESSAGE);
                     reset();
                     TableLoad();
-
+                    JOptionPane.showMessageDialog(this, "Update is Done", "Success", JOptionPane.INFORMATION_MESSAGE);
                     jTable1.setEnabled(true);
                     jButton1.setEnabled(true);
                 } catch (Exception e) {
@@ -469,11 +443,8 @@ public class UserRegistration extends javax.swing.JFrame {
             String id = String.valueOf(jTable1.getValueAt(selectedRowData, 0));
 
             try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db5", "root", "200528100634@Vn");
-                Statement statement = connection.createStatement();
 
-                statement.executeUpdate("DELETE FROM `user` WHERE `user_id` = '" + id + "'");
+                mysql.execute("DELETE FROM `user` WHERE `user_id` = '" + id + "'");
                 JOptionPane.showMessageDialog(this, "User Deleted", "Delete", JOptionPane.INFORMATION_MESSAGE);
                 reset();
                 TableLoad();
