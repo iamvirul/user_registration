@@ -443,7 +443,6 @@ public class UserRegistration extends javax.swing.JFrame {
             String id = String.valueOf(jTable1.getValueAt(selectedRowData, 0));
 
             try {
-
                 mysql.execute("DELETE FROM `user` WHERE `user_id` = '" + id + "'");
                 JOptionPane.showMessageDialog(this, "User Deleted", "Delete", JOptionPane.INFORMATION_MESSAGE);
                 reset();
