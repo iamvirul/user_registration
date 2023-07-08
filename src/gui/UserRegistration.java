@@ -65,6 +65,7 @@ public class UserRegistration extends javax.swing.JFrame {
 
     private void TableLoad() {
         try {
+            
             ResultSet resultSet = mysql.execute("SELECT * FROM db5.user INNER JOIN `db5`.`gender` ON `gender_id` = `gender_gender_id` INNER JOIN `db5`.`country` ON `country_country_id` = `country_id` ORDER by `user_id` ASC");
             DefaultTableModel userTableModel = (DefaultTableModel) jTable1.getModel();
             userTableModel.setRowCount(0);

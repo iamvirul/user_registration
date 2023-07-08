@@ -3,6 +3,7 @@ package model;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class mysql2 {
@@ -13,7 +14,7 @@ public class mysql2 {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db5", "root", "200528100634@Vn");
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | SQLException e) {
         }
     }
 
